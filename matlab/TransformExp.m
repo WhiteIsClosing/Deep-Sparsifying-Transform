@@ -4,7 +4,7 @@
 clear,clc;
 close all;
 
-image   = imread('data/lena.jpg');
+image   = imread('../data/lena.jpg');
 
 [h,w]   = size(image);
 image   = double(image);
@@ -17,11 +17,11 @@ l4      = l2;   % weight of incoherence
 l3      = l2;   % weight of weight decay
 p       = 20;   % power of incoherence
 step    = 1e-7; % CG step
-iter    = 100;  % iter times
-cg_iter = 100;   % CG iter times
+iter    = 130;  % iter times
+cg_iter = 100;  % CG iter times
 debug   = 0;
 visual  = 1;
-saved_path  = 'result\transform_exp\';
+saved_path  = '../result/transform_exp/';
 
 blocks  = my_im2col(image,[sqrt(n),sqrt(n)],1);
 Y       = blocks - (ones(n,1)*mean(blocks));
