@@ -1,11 +1,18 @@
-function [W,X]= TransformLearning(W,Y,iter,l2,l3,l4,p,step,cg_iter,thr,debug,visual,saved_path)
+function [W,X]= TransformLearning(W,ZCA,Y,iter,l2,l3,l4,p,step,cg_iter,thr,T0,debug,visual,saved_path)
 
     [M,n]   = size(W);
     X       = zeros(M,size(Y,2));
     YYT     = Y*Y';
 
     for i=1:iter
-        X   = soft(W*Y,thr);    
+        if T0 == 0
+            X   = soft(W*Y,thr);  
+        else
+            tmp     = W*Y;
+            sorted  = sort(abs(tmp),'descend');
+            X       = tmp.*bsxfun(@ge,abs(tmp),repmat(sorted(T0,:),M,1));
+        end
+        
         XYT = X*Y';
         for j = 1:cg_iter
             ZZ  = (W*W').^(p-1);
@@ -49,7 +56,7 @@ function [W,X]= TransformLearning(W,Y,iter,l2,l3,l4,p,step,cg_iter,thr,debug,vis
         disp(err_str);
         
         if visual == 1
-            visualization     = displayDictionaryElementsAsImage(W', sqrt(M), sqrt(M),sqrt(n),sqrt(n));
+            visualization     = displayDictionaryElementsAsImage((W*ZCA)', sqrt(M), sqrt(M),sqrt(n),sqrt(n));
             imwrite(visualization,[saved_path,num2str(i),'.jpg']);
         end
     end
